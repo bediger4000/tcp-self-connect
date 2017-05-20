@@ -53,3 +53,13 @@ phrase to iself to prove that the connection works.
 
 I don't know why `getpeername()` and `getsockname()` both report
 that they're using port 20675.
+
+I also observe that choice of port number matters. Odd port number,
+like 50011, seem to never get connected. Even port numbers, 50000,
+50012, 50014, seem to connect quite quickly.
+
+You also want to choose a port number in the "ephemeral port range",
+which in Linux, you can find out like this:
+
+    $ cat /proc/sys/net/ipv4/ip_local_port_range
+    32768   60999
