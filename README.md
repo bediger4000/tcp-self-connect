@@ -1,9 +1,24 @@
 # Illustrate TCP self-connect
 
-http://sgros.blogspot.com/2013/08/tcp-client-self-connect.html
+Due to two features (simultaneous open and ephemeral port range)
+colliding, a process on Linux can make a TCP/IP connection to itself.
+This can manifest as an [intermittant bug](https://goodenoughsoftware.net/2013/07/15/self-connects/).
+[Decent explanations](http://sgros.blogspot.com/2013/08/tcp-client-self-connect.html) of
+this exist.
 
+The usual demo is a shell script like this:
+
+    while true
+    do
+       telnet 127.0.0.1 50000
+    done
+
+I ran out of patience waiting for that to work, so I wrote a small
+C program that usually connects to itself.
 
 ## Doing a TCP self-connect
+
+In one `xterm`, build and execute the `self_connect` program:
 
     $ make
     $ make run
@@ -14,7 +29,9 @@ http://sgros.blogspot.com/2013/08/tcp-client-self-connect.html
     Received "hello world!" from socket
     Pause, time for netstat -t, and ls -l /proc/1828/fd
 
-Meanwhile, in another `xterm`:
+Occasionally, `self_connect` gets a hit almost instantly. Other times,
+you'll lose patience and ctrl-C it. When it does get a connection,
+as above, try what it reccommends in another `xterm`:
 
 	$ netstat -t
     Active Internet connections (w/o servers)
@@ -34,3 +51,5 @@ Meanwhile, in another `xterm`:
 It really does connect to itself on TCP port 50000. It sends a famous
 phrase to iself to prove that the connection works.
 
+I don't know why `getpeername()` and `getsockname()` both report
+that they're using port 20675.
